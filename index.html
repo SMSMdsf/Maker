@@ -8,22 +8,37 @@
         /* Base page setup */
         body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #fcfaf7; color: #333; margin: 0; padding: 0; overflow-x: hidden; position: relative; min-height: 100vh; }
         
-        /* ─── CHERRY BLOSSOM PETALS ─── */
+        /* ─── SLOW MOTION CHERRY BLOSSOM PETALS ─── */
         .petal {
             position: fixed;
-            top: -20px;
+            top: -30px;
             background-color: #ffb7c5;
             border-radius: 15px 0 15px 10px;
-            opacity: 0.8;
+            opacity: 0.65; /* Made slightly softer for a calmer look */
             pointer-events: none;
             z-index: 9999;
             animation: fall linear forwards;
         }
 
         @keyframes fall {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
-            50% { transform: translateY(50vh) translateX(80px) rotate(180deg); opacity: 0.7; }
-            100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
+            0% { 
+                transform: translateY(0) translateX(0) rotate(0deg); 
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.75; /* Smoothly fade in near top */
+            }
+            50% { 
+                transform: translateY(50vh) translateX(60px) rotate(120deg); 
+                opacity: 0.7; 
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% { 
+                transform: translateY(105vh) translateX(-20px) rotate(240deg); 
+                opacity: 0; /* Gracefully fade out at the bottom */
+            }
         }
 
         /* ─── MAIN WEBSITE STYLES ─── */
@@ -93,7 +108,7 @@
         .item-details h3 { margin: 0 0 5px 0; font-size: 1.2em; color: #4a3b32; }
         .item-details p { margin: 0; font-size: 0.95em; color: #888; }
 
-        /* ─── BUSINESS HOURS SECTION ─── */
+        /* Business hours section */
         .hours-section { padding: 60px 20px; background-color: #fdfcfb; border-top: 1px solid #eee; position: relative; z-index: 1; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1.1s; }
         .hours-box { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
         .hours-box h2 { font-size: 1.8em; color: #4a3b32; margin-top: 0; margin-bottom: 20px; }
@@ -163,7 +178,7 @@
         </div>
     </div>
 
-    <!-- ─── BUSINESS HOURS LAYOUT ─── -->
+    <!-- Business Hours Layout -->
     <div class="hours-section">
         <div class="hours-box">
             <h2>🕒 Opening Hours</h2>
@@ -190,7 +205,7 @@
                 </tr>
                 <tr>
                     <td class="day">Saturday</td>
-                    <td class="time">10:00 AM - 6:00 PM</td>
+                    <td class="time">Closed</td>
                 </tr>
                 <tr class="closed">
                     <td class="day">Sunday</td>
@@ -208,5 +223,3 @@
             <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
             
             <div class="map-container">
-                <iframe src="https://google.com" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
