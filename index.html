@@ -7,11 +7,74 @@
     <style>
         /* Base page setup */
         body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #fcfaf7; color: #333; margin: 0; padding: 0; overflow-x: hidden; position: relative; min-height: 100vh; }
+        
+        /* ─── INTRO SPLASH SCREEN ─── */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #fcfaf7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            cursor: pointer;
+        }
+        
+        /* Pulsing animation for the splash text */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .splash-logo {
+            font-size: 3.2em;
+            color: #4a3b32;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+            animation: pulse 2.5s infinite ease-in-out;
+            user-select: none;
+            padding: 0 20px;
+        }
+        .splash-logo span { color: #bc8f8f; font-weight: bold; }
+        
+        .splash-hint {
+            font-size: 0.9em;
+            color: #a39085;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        /* Class added by JS to fade out splash screen */
+        .fade-out {
+            opacity: 0 !important;
+            pointer-events: none;
+            transform: scale(1.05);
+        }
+
+        /* Hide main content initially until clicked */
+        .main-wrapper {
+            opacity: 0;
+            transition: opacity 1s ease;
+            transition-delay: 0.2s;
+        }
+        .main-wrapper.reveal {
+            opacity: 1;
+        }
+
+        /* ─── EXISTING WEBSITE STYLES ─── */
         .hero { padding: 80px 20px; background: linear-gradient(135deg, #f5f0e6, #eaddca); position: relative; z-index: 1; }
         
-        /* ─── FIXED CHERRY BLOSSOM PETAL ANIMATIONS ─── */
+        /* Fixed cherry blossom petal animations */
         .petal {
-            position: fixed; /* Changed to fixed so they float over everything */
+            position: fixed;
             top: -20px;
             background-color: #ffb7c5;
             border-radius: 15px 0 15px 10px;
@@ -27,7 +90,7 @@
             100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
         }
 
-        /* ─── PAGE ENTRANCE ANIMATION ─── */
+        /* Page entrance animation once revealed */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -40,6 +103,8 @@
             text-transform: lowercase; 
             letter-spacing: 1px;
             opacity: 0;
+        }
+        .reveal h1 {
             animation: fadeInUp 0.8s ease-out forwards;
             animation-delay: 0.2s;
         }
@@ -53,6 +118,8 @@
             margin: 0 auto 20px auto; 
             line-height: 1.6;
             opacity: 0;
+        }
+        .reveal .intro-text {
             animation: fadeInUp 0.8s ease-out forwards;
             animation-delay: 0.5s;
         }
@@ -69,17 +136,20 @@
             margin-top: 10px;
             box-shadow: 0 4px 10px rgba(188, 143, 143, 0.3);
             opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.8s;
             transition: all 0.3s ease;
             position: relative;
             z-index: 10;
         }
+        .reveal .cta-button {
+            animation: fadeInUp 0.8s ease-out forwards;
+            animation-delay: 0.8s;
+        }
         
         .cta-button:hover { background-color: #a37575; transform: scale(1.05); box-shadow: 0 6px 15px rgba(188, 143, 143, 0.5); }
         
-        /* ─── GALLERY SECTION ─── */
-        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1s; }
+        /* Gallery section */
+        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; opacity: 0; }
+        .reveal .gallery-section { animation: fadeInUp 1s ease-out forwards; animation-delay: 1s; }
         .gallery-section h2 { font-size: 2em; color: #4a3b32; margin-bottom: 30px; position: relative; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
         
@@ -94,8 +164,9 @@
         .item-details h3 { margin: 0 0 5px 0; font-size: 1.2em; color: #4a3b32; }
         .item-details p { margin: 0; font-size: 0.95em; color: #888; }
 
-        /* ─── LOCATION SECTION ─── */
-        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1.2s; position: relative; z-index: 1; }
+        /* Location section */
+        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; opacity: 0; position: relative; z-index: 1; }
+        .reveal .location-section { animation: fadeInUp 1s ease-out forwards; animation-delay: 1.2s; }
         .location-box { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; }
         .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 25px; }
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
@@ -103,483 +174,68 @@
 </head>
 <body>
 
-    <!-- Header Section -->
-    <div class="hero">
-        <h1>canab<span>.</span>collection</h1>
-        <p class="intro-text">Discover our exclusive range of beautiful styles and curated items. Visit us today to explore the collection in person!</p>
-        <a href="https://wa.me" target="_blank" class="cta-button">Message Us on WhatsApp</a>
+    <!-- ─── ANNOUNCEMENT / SPLASH SCREEN ─── -->
+    <div id="splash-screen" onclick="enterWebsite()">
+        <div class="splash-logo">canab collection<span>.</span></div>
+        <div class="splash-hint">click anywhere to enter</div>
     </div>
 
-    <!-- Product Showcase Gallery Section -->
-    <div class="gallery-section">
-        <h2>✨ Our Beautiful Collection</h2>
-        <div class="gallery-grid">
-            
-            <!-- Item 1: Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary gorgeous dress link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Beautiful Designer Kameez">
-                </div>
-                <div class="item-details">
-                    <h3>Designer Shalwar Kameez</h3>
-                    <p>Elegant embroidery, premium fabrics, and perfect tailoring.</p>
-                </div>
-            </div>
-
-            <!-- Item 2: Hijab -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary hijab profile link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Premium Quality Hijab">
-                </div>
-                <div class="item-details">
-                    <h3>Premium Fine Hijab</h3>
-                    <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
-                </div>
-            </div>
-
-            <!-- Item 3: Luxury Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <img src="https://unsplash.com" alt="Luxury Modest Wear">
-                </div>
-                <div class="item-details">
-                    <h3>Exclusive Party Wear</h3>
-                    <p>Stunning traditional items with intricate design accents.</p>
-                </div>
-            </div>
-
+    <!-- ─── MAIN WEBSITE WRAPPER (HIDDEN AT START) ─── -->
+    <div class="main-wrapper" id="main-content">
+        
+        <!-- Header Section -->
+        <div class="hero">
+            <h1>canab<span>.</span>collection</h1>
+            <p class="intro-text">Discover our exclusive range of beautiful styles and curated items. Visit us today to explore the collection in person!</p>
+            <a href="https://wa.me" target="_blank" class="cta-button">Message Us on WhatsApp</a>
         </div>
-    </div>
 
-    <!-- Location & Map Section -->
-    <div class="location-section">
-        <div class="location-box">
-            <h2>📍 Visit Our Shop</h2>
-            <p>We are located at <strong>15 Whitmore Road, Birmingham (Small Heath)</strong>.</p>
-            <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
-            
-            <div class="map-container">
-                <iframe src="https://google.com" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <!-- Product Showcase Gallery Section -->
+        <div class="gallery-section">
+            <h2>✨ Our Beautiful Collection</h2>
+            <div class="gallery-grid">
+                
+                <!-- Item 1: Kameez -->
+                <div class="gallery-item">
+                    <div class="img-container">
+                        <img src="https://unsplash.com" alt="Beautiful Designer Kameez">
+                    </div>
+                    <div class="item-details">
+                        <h3>Designer Shalwar Kameez</h3>
+                        <p>Elegant embroidery, premium fabrics, and perfect tailoring.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2: Hijab -->
+                <div class="gallery-item">
+                    <div class="img-container">
+                        <img src="https://unsplash.com" alt="Premium Quality Hijab">
+                    </div>
+                    <div class="item-details">
+                        <h3>Premium Fine Hijab</h3>
+                        <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3: Luxury Kameez -->
+                <div class="gallery-item">
+                    <div class="img-container">
+                        <img src="https://unsplash.com" alt="Luxury Modest Wear">
+                    </div>
+                    <div class="item-details">
+                        <h3>Exclusive Party Wear</h3>
+                        <p>Stunning traditional items with intricate design accents.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
 
-    <!-- ─── FIXED CHERRY BLOSSOM JAVASCRIPT ─── -->
-    <script>
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.classList.add('petal');
-            
-            // Randomizes left layout spot perfectly
-            petal.style.left = Math.random() * window.innerWidth + 'px';
-            
-            const size = Math.random() * 8 + 8;
-            petal.style.width = size + 'px';
-            petal.style.height = (size * 1.2) + 'px';
-            
-            petal.style.animationDuration = Math.random() * 4 + 5 + 's';
-            
-            document.body.appendChild(petal);
-            
-            setTimeout(() => {
-                petal.remove();
-            }, 9000);
-        }
-        // Spawns petals continuously
-        setInterval(createPetal, 250);
-    </script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canab.collection</title>
-    <style>
-        /* Base page setup */
-        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #fcfaf7; color: #333; margin: 0; padding: 0; overflow-x: hidden; position: relative; min-height: 100vh; }
-        .hero { padding: 80px 20px; background: linear-gradient(135deg, #f5f0e6, #eaddca); position: relative; z-index: 1; }
-        
-        /* ─── FIXED CHERRY BLOSSOM PETAL ANIMATIONS ─── */
-        .petal {
-            position: fixed; /* Changed to fixed so they float over everything */
-            top: -20px;
-            background-color: #ffb7c5;
-            border-radius: 15px 0 15px 10px;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 9999;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
-            50% { transform: translateY(50vh) translateX(80px) rotate(180deg); opacity: 0.7; }
-            100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
-        }
-
-        /* ─── PAGE ENTRANCE ANIMATION ─── */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 { 
-            font-size: 2.8em; 
-            color: #4a3b32; 
-            margin-bottom: 10px; 
-            text-transform: lowercase; 
-            letter-spacing: 1px;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.2s;
-        }
-        
-        h1 span { color: #bc8f8f; font-weight: bold; }
-        
-        p.intro-text { 
-            font-size: 1.2em; 
-            color: #6e5d53; 
-            max-width: 600px; 
-            margin: 0 auto 20px auto; 
-            line-height: 1.6;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.5s;
-        }
-        
-        .cta-button { 
-            display: inline-block; 
-            background-color: #bc8f8f; 
-            color: white; 
-            padding: 14px 30px; 
-            text-decoration: none; 
-            border-radius: 30px; 
-            font-weight: bold; 
-            font-size: 1.1em; 
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(188, 143, 143, 0.3);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.8s;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .cta-button:hover { background-color: #a37575; transform: scale(1.05); box-shadow: 0 6px 15px rgba(188, 143, 143, 0.5); }
-        
-        /* ─── GALLERY SECTION ─── */
-        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1s; }
-        .gallery-section h2 { font-size: 2em; color: #4a3b32; margin-bottom: 30px; position: relative; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
-        
-        .gallery-item { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s ease; text-align: left; }
-        .gallery-item:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        
-        .img-container { width: 100%; height: 350px; background-color: #eaeaea; overflow: hidden; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
-        .gallery-item:hover .img-container img { scale: 1.04; }
-        
-        .item-details { padding: 15px; }
-        .item-details h3 { margin: 0 0 5px 0; font-size: 1.2em; color: #4a3b32; }
-        .item-details p { margin: 0; font-size: 0.95em; color: #888; }
-
-        /* ─── LOCATION SECTION ─── */
-        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1.2s; position: relative; z-index: 1; }
-        .location-box { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; }
-        .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 25px; }
-        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-    </style>
-</head>
-<body>
-
-    <!-- Header Section -->
-    <div class="hero">
-        <h1>canab<span>.</span>collection</h1>
-        <p class="intro-text">Discover our exclusive range of beautiful styles and curated items. Visit us today to explore the collection in person!</p>
-        <a href="https://wa.me" target="_blank" class="cta-button">Message Us on WhatsApp</a>
-    </div>
-
-    <!-- Product Showcase Gallery Section -->
-    <div class="gallery-section">
-        <h2>✨ Our Beautiful Collection</h2>
-        <div class="gallery-grid">
-            
-            <!-- Item 1: Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary gorgeous dress link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Beautiful Designer Kameez">
-                </div>
-                <div class="item-details">
-                    <h3>Designer Shalwar Kameez</h3>
-                    <p>Elegant embroidery, premium fabrics, and perfect tailoring.</p>
-                </div>
-            </div>
-
-            <!-- Item 2: Hijab -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary hijab profile link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Premium Quality Hijab">
-                </div>
-                <div class="item-details">
-                    <h3>Premium Fine Hijab</h3>
-                    <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
-                </div>
-            </div>
-
-            <!-- Item 3: Luxury Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <img src="https://unsplash.com" alt="Luxury Modest Wear">
-                </div>
-                <div class="item-details">
-                    <h3>Exclusive Party Wear</h3>
-                    <p>Stunning traditional items with intricate design accents.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Location & Map Section -->
-    <div class="location-section">
-        <div class="location-box">
-            <h2>📍 Visit Our Shop</h2>
-            <p>We are located at <strong>15 Whitmore Road, Birmingham (Small Heath)</strong>.</p>
-            <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
-            
-            <div class="map-container">
-                <iframe src="https://google.com" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── FIXED CHERRY BLOSSOM JAVASCRIPT ─── -->
-    <script>
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.classList.add('petal');
-            
-            // Randomizes left layout spot perfectly
-            petal.style.left = Math.random() * window.innerWidth + 'px';
-            
-            const size = Math.random() * 8 + 8;
-            petal.style.width = size + 'px';
-            petal.style.height = (size * 1.2) + 'px';
-            
-            petal.style.animationDuration = Math.random() * 4 + 5 + 's';
-            
-            document.body.appendChild(petal);
-            
-            setTimeout(() => {
-                petal.remove();
-            }, 9000);
-        }
-        // Spawns petals continuously
-        setInterval(createPetal, 250);
-    </script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canab.collection</title>
-    <style>
-        /* Base page setup */
-        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #fcfaf7; color: #333; margin: 0; padding: 0; overflow-x: hidden; position: relative; min-height: 100vh; }
-        .hero { padding: 80px 20px; background: linear-gradient(135deg, #f5f0e6, #eaddca); position: relative; z-index: 1; }
-        
-        /* ─── FIXED CHERRY BLOSSOM PETAL ANIMATIONS ─── */
-        .petal {
-            position: fixed; /* Changed to fixed so they float over everything */
-            top: -20px;
-            background-color: #ffb7c5;
-            border-radius: 15px 0 15px 10px;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 9999;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
-            50% { transform: translateY(50vh) translateX(80px) rotate(180deg); opacity: 0.7; }
-            100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
-        }
-
-        /* ─── PAGE ENTRANCE ANIMATION ─── */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 { 
-            font-size: 2.8em; 
-            color: #4a3b32; 
-            margin-bottom: 10px; 
-            text-transform: lowercase; 
-            letter-spacing: 1px;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.2s;
-        }
-        
-        h1 span { color: #bc8f8f; font-weight: bold; }
-        
-        p.intro-text { 
-            font-size: 1.2em; 
-            color: #6e5d53; 
-            max-width: 600px; 
-            margin: 0 auto 20px auto; 
-            line-height: 1.6;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.5s;
-        }
-        
-        .cta-button { 
-            display: inline-block; 
-            background-color: #bc8f8f; 
-            color: white; 
-            padding: 14px 30px; 
-            text-decoration: none; 
-            border-radius: 30px; 
-            font-weight: bold; 
-            font-size: 1.1em; 
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(188, 143, 143, 0.3);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.8s;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .cta-button:hover { background-color: #a37575; transform: scale(1.05); box-shadow: 0 6px 15px rgba(188, 143, 143, 0.5); }
-        
-        /* ─── GALLERY SECTION ─── */
-        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1s; }
-        .gallery-section h2 { font-size: 2em; color: #4a3b32; margin-bottom: 30px; position: relative; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
-        
-        .gallery-item { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s ease; text-align: left; }
-        .gallery-item:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        
-        .img-container { width: 100%; height: 350px; background-color: #eaeaea; overflow: hidden; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
-        .gallery-item:hover .img-container img { scale: 1.04; }
-        
-        .item-details { padding: 15px; }
-        .item-details h3 { margin: 0 0 5px 0; font-size: 1.2em; color: #4a3b32; }
-        .item-details p { margin: 0; font-size: 0.95em; color: #888; }
-
-        /* ─── LOCATION SECTION ─── */
-        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; opacity: 0; animation: fadeInUp 1s ease-out forwards; animation-delay: 1.2s; position: relative; z-index: 1; }
-        .location-box { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; }
-        .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 25px; }
-        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-    </style>
-</head>
-<body>
-
-    <!-- Header Section -->
-    <div class="hero">
-        <h1>canab<span>.</span>collection</h1>
-        <p class="intro-text">Discover our exclusive range of beautiful styles and curated items. Visit us today to explore the collection in person!</p>
-        <a href="https://wa.me" target="_blank" class="cta-button">Message Us on WhatsApp</a>
-    </div>
-
-    <!-- Product Showcase Gallery Section -->
-    <div class="gallery-section">
-        <h2>✨ Our Beautiful Collection</h2>
-        <div class="gallery-grid">
-            
-            <!-- Item 1: Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary gorgeous dress link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Beautiful Designer Kameez">
-                </div>
-                <div class="item-details">
-                    <h3>Designer Shalwar Kameez</h3>
-                    <p>Elegant embroidery, premium fabrics, and perfect tailoring.</p>
-                </div>
-            </div>
-
-            <!-- Item 2: Hijab -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <!-- Temporary hijab profile link until you upload your photo -->
-                    <img src="https://unsplash.com" alt="Premium Quality Hijab">
-                </div>
-                <div class="item-details">
-                    <h3>Premium Fine Hijab</h3>
-                    <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
-                </div>
-            </div>
-
-            <!-- Item 3: Luxury Kameez -->
-            <div class="gallery-item">
-                <div class="img-container">
-                    <img src="https://unsplash.com" alt="Luxury Modest Wear">
-                </div>
-                <div class="item-details">
-                    <h3>Exclusive Party Wear</h3>
-                    <p>Stunning traditional items with intricate design accents.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Location & Map Section -->
-    <div class="location-section">
-        <div class="location-box">
-            <h2>📍 Visit Our Shop</h2>
-            <p>We are located at <strong>15 Whitmore Road, Birmingham (Small Heath)</strong>.</p>
-            <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
-            
-            <div class="map-container">
-                <iframe src="https://google.com" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── FIXED CHERRY BLOSSOM JAVASCRIPT ─── -->
-    <script>
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.classList.add('petal');
-            
-            // Randomizes left layout spot perfectly
-            petal.style.left = Math.random() * window.innerWidth + 'px';
-            
-            const size = Math.random() * 8 + 8;
-            petal.style.width = size + 'px';
-            petal.style.height = (size * 1.2) + 'px';
-            
-            petal.style.animationDuration = Math.random() * 4 + 5 + 's';
-            
-            document.body.appendChild(petal);
-            
-            setTimeout(() => {
-                petal.remove();
-            }, 9000);
-        }
-        // Spawns petals continuously
-        setInterval(createPetal, 250);
-    </script>
-
-</body>
-</html>
+        <!-- Location & Map Section -->
+        <div class="location-section">
+            <div class="location-box">
+                <h2>📍 Visit Our Shop</h2>
+                <p>We are located at <strong>15 Whitmore Road, Birmingham (Small Heath)</strong>.</p>
+                <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
+                
+                <div class="map-container">
