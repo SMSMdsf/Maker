@@ -55,18 +55,50 @@
         /* Class added by JS to fade out splash screen */
         .fade-out {
             opacity: 0 !important;
-            pointer-events: none;
+            pointer-events: none !important;
             transform: scale(1.05);
         }
 
-        /* Hide main content initially until clicked */
+        /* Hide main content initially and disable interaction until clicked */
         .main-wrapper {
             opacity: 0;
+            pointer-events: none;
             transition: opacity 1s ease;
             transition-delay: 0.2s;
         }
         .main-wrapper.reveal {
             opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ─── MUSIC TOGGLE CONTROL ─── */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 999;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #6e5d53;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .audio-control.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .audio-control:hover {
+            transform: scale(1.05);
+            background: #f5f0e6;
         }
 
         /* ─── EXISTING WEBSITE STYLES ─── */
@@ -180,6 +212,15 @@
         <div class="splash-hint">click anywhere to enter</div>
     </div>
 
+    <!-- ─── AUDIO ELEMENT ─── -->
+    <!-- Looped royalty-free quiet chill track -->
+    <audio id="bg-music" src="https://mixkit.co" loop></audio>
+
+    <!-- Floating button allowing customers to turn music off/on easily -->
+    <div id="audio-btn" class="audio-control" onclick="toggleAudio()">
+        <span>🎵</span> <span id="audio-status">Music: On</span>
+    </div>
+
     <!-- ─── MAIN WEBSITE WRAPPER (HIDDEN AT START) ─── -->
     <div class="main-wrapper" id="main-content">
         
@@ -213,29 +254,3 @@
                     </div>
                     <div class="item-details">
                         <h3>Premium Fine Hijab</h3>
-                        <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
-                    </div>
-                </div>
-
-                <!-- Item 3: Luxury Kameez -->
-                <div class="gallery-item">
-                    <div class="img-container">
-                        <img src="https://unsplash.com" alt="Luxury Modest Wear">
-                    </div>
-                    <div class="item-details">
-                        <h3>Exclusive Party Wear</h3>
-                        <p>Stunning traditional items with intricate design accents.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Location & Map Section -->
-        <div class="location-section">
-            <div class="location-box">
-                <h2>📍 Visit Our Shop</h2>
-                <p>We are located at <strong>15 Whitmore Road, Birmingham (Small Heath)</strong>.</p>
-                <p style="font-size: 1em; color: #888;"><em>Find us right next door to <strong>Sundus Juices & Cafe</strong> and Furqan Travel!</em></p>
-                
-                <div class="map-container">
