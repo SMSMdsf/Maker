@@ -8,6 +8,24 @@
         /* Base page setup */
         body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #fcfaf7; color: #333; margin: 0; padding: 0; overflow-x: hidden; position: relative; min-height: 100vh; }
         
+        /* ─── FIXED CHERRY BLOSSOM PETALS (ALWAYS VISIBLE) ─── */
+        .petal {
+            position: fixed;
+            top: -20px;
+            background-color: #ffb7c5;
+            border-radius: 15px 0 15px 10px;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 15000; /* Placed higher so it displays over splash screen immediately */
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
+            50% { transform: translateY(50vh) translateX(80px) rotate(180deg); opacity: 0.7; }
+            100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
+        }
+
         /* ─── INTRO SPLASH SCREEN ─── */
         #splash-screen {
             position: fixed;
@@ -62,13 +80,11 @@
         /* Hide main content initially and disable interaction until clicked */
         .main-wrapper {
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease;
-            transition-delay: 0.2s;
+            display: none; /* Changed to completely remove layout footprint from click path */
         }
         .main-wrapper.reveal {
             opacity: 1;
-            pointer-events: auto;
+            display: block;
         }
 
         /* ─── MUSIC TOGGLE CONTROL ─── */
@@ -101,87 +117,28 @@
             background: #f5f0e6;
         }
 
-        /* ─── EXISTING WEBSITE STYLES ─── */
+        /* ─── MAIN WEBSITE BODY STYLES ─── */
         .hero { padding: 80px 20px; background: linear-gradient(135deg, #f5f0e6, #eaddca); position: relative; z-index: 1; }
         
-        /* Fixed cherry blossom petal animations */
-        .petal {
-            position: fixed;
-            top: -20px;
-            background-color: #ffb7c5;
-            border-radius: 15px 0 15px 10px;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 9999;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
-            50% { transform: translateY(50vh) translateX(80px) rotate(180deg); opacity: 0.7; }
-            100% { transform: translateY(105vh) translateX(-40px) rotate(360deg); opacity: 0; }
-        }
-
         /* Page entrance animation once revealed */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 { 
-            font-size: 2.8em; 
-            color: #4a3b32; 
-            margin-bottom: 10px; 
-            text-transform: lowercase; 
-            letter-spacing: 1px;
-            opacity: 0;
-        }
-        .reveal h1 {
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.2s;
-        }
-        
+        h1 { font-size: 2.8em; color: #4a3b32; margin-bottom: 10px; text-transform: lowercase; letter-spacing: 1px; }
+        .reveal h1 { animation: fadeInUp 0.8s ease-out forwards; animation-delay: 0.1s; }
         h1 span { color: #bc8f8f; font-weight: bold; }
         
-        p.intro-text { 
-            font-size: 1.2em; 
-            color: #6e5d53; 
-            max-width: 600px; 
-            margin: 0 auto 20px auto; 
-            line-height: 1.6;
-            opacity: 0;
-        }
-        .reveal .intro-text {
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.5s;
-        }
+        p.intro-text { font-size: 1.2em; color: #6e5d53; max-width: 600px; margin: 0 auto 20px auto; line-height: 1.6; }
+        .reveal .intro-text { animation: fadeInUp 0.8s ease-out forwards; animation-delay: 0.3s; }
         
-        .cta-button { 
-            display: inline-block; 
-            background-color: #bc8f8f; 
-            color: white; 
-            padding: 14px 30px; 
-            text-decoration: none; 
-            border-radius: 30px; 
-            font-weight: bold; 
-            font-size: 1.1em; 
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(188, 143, 143, 0.3);
-            opacity: 0;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 10;
-        }
-        .reveal .cta-button {
-            animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.8s;
-        }
-        
+        .cta-button { display: inline-block; background-color: #bc8f8f; color: white; padding: 14px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 1.1em; margin-top: 10px; box-shadow: 0 4px 10px rgba(188, 143, 143, 0.3); transition: all 0.3s ease; position: relative; z-index: 10; }
+        .reveal .cta-button { animation: fadeInUp 0.8s ease-out forwards; animation-delay: 0.5s; }
         .cta-button:hover { background-color: #a37575; transform: scale(1.05); box-shadow: 0 6px 15px rgba(188, 143, 143, 0.5); }
         
         /* Gallery section */
-        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; opacity: 0; }
-        .reveal .gallery-section { animation: fadeInUp 1s ease-out forwards; animation-delay: 1s; }
+        .gallery-section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; }
         .gallery-section h2 { font-size: 2em; color: #4a3b32; margin-bottom: 30px; position: relative; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
         
@@ -197,8 +154,7 @@
         .item-details p { margin: 0; font-size: 0.95em; color: #888; }
 
         /* Location section */
-        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; opacity: 0; position: relative; z-index: 1; }
-        .reveal .location-section { animation: fadeInUp 1s ease-out forwards; animation-delay: 1.2s; }
+        .location-section { background-color: white; padding: 60px 20px; border-top: 1px solid #eee; position: relative; z-index: 1; }
         .location-box { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; }
         .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 25px; }
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
@@ -209,14 +165,13 @@
     <!-- ─── ANNOUNCEMENT / SPLASH SCREEN ─── -->
     <div id="splash-screen" onclick="enterWebsite()">
         <div class="splash-logo">canab collection<span>.</span></div>
-        <div class="splash-hint">click anywhere to enter</div>
+        <div class="splash-hint">click anywhere, press space or enter to enter</div>
     </div>
 
     <!-- ─── AUDIO ELEMENT ─── -->
-    <!-- Looped royalty-free quiet chill track -->
     <audio id="bg-music" src="https://mixkit.co" loop></audio>
 
-    <!-- Floating button allowing customers to turn music off/on easily -->
+    <!-- Floating button to control background music -->
     <div id="audio-btn" class="audio-control" onclick="toggleAudio()">
         <span>🎵</span> <span id="audio-status">Music: On</span>
     </div>
@@ -236,7 +191,7 @@
             <h2>✨ Our Beautiful Collection</h2>
             <div class="gallery-grid">
                 
-                <!-- Item 1: Kameez -->
+                <!-- Item 1 -->
                 <div class="gallery-item">
                     <div class="img-container">
                         <img src="https://unsplash.com" alt="Beautiful Designer Kameez">
@@ -247,10 +202,29 @@
                     </div>
                 </div>
 
-                <!-- Item 2: Hijab -->
+                <!-- Item 2 -->
                 <div class="gallery-item">
                     <div class="img-container">
                         <img src="https://unsplash.com" alt="Premium Quality Hijab">
                     </div>
                     <div class="item-details">
                         <h3>Premium Fine Hijab</h3>
+                        <p>Beautiful, lightweight luxury fabrics crafted for everyday comfort.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="gallery-item">
+                    <div class="img-container">
+                        <img src="https://unsplash.com" alt="Luxury Modest Wear">
+                    </div>
+                    <div class="item-details">
+                        <h3>Exclusive Party Wear</h3>
+                        <p>Stunning traditional items with intricate design accents.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Location & Map Section -->
