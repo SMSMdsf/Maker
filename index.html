@@ -312,7 +312,7 @@
             <div id="big-mouth"></div>
         </div>
     </div>
-    <script>
+       <script>
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
@@ -374,208 +374,58 @@
             }, 800);
         }
 
+        // Helper function to extract and solve math expressions like "9+9" or "100 / 2"
+        function solveMath(text) {
+            const mathMatch = text.replace(/\s+/g, '').match(/(\d+)([\+\-\*\/])(\d+)/);
+            if (mathMatch) {
+                const num1 = parseInt(mathMatch[1]);
+                const operator = mathMatch[2];
+                const num2 = parseInt(mathMatch[3]);
+                
+                if (operator === '+') return num1 + num2;
+                if (operator === '-') return num1 - num2;
+                if (operator === '*') return num1 * num2;
+                if (operator === '/') return num2 !== 0 ? num1 / num2 : "undefined (cannot divide by zero)";
+            }
+            return null;
+        }
+
         function processVerityLogic(inputText) {
             const cleanInput = inputText.toUpperCase();
 
+            // Secret Trigger: Mob
             if (cleanInput.includes("MOB")) {
                 triggerMobSecretSequence();
                 return;
             }
 
+            // Horror Trigger: What's wrong with you
             if (cleanInput.includes("WHATS WRONG WITH YOU") || cleanInput.includes("WHATS WRONG WITH U") || cleanInput.includes("WHAT IS WRONG")) {
                 triggerCountdown();
                 return;
             }
 
-            if (questionCount <= 2) {
-                appendMessage('verity', `You asked about "${inputText}". I can confirm perfectly that this data is fully verified.`);
-            } 
-            else if (questionCount > 2 && questionCount <= 5) {
-                mouth.style.height = "26px";
-                mouth.style.borderRadius = "0 0 60% 60%";
-                mouth.style.bottom = "12px";
-                avatar.style.backgroundColor = "#d4af37"; 
-                
-                if (questionCount === 3) {
-                    appendMessage('verity', "I know everything... Do you know who I am? Ask me about myself.");
-                } else {
-                    appendMessage('verity', genericResponses[questionCount - 1] || "Ask me more about my true function.");
-                }
+            // Check if it's a math equation
+            const mathAnswer = solveMath(inputText);
+            let intelligentAnswer = "";
+
+            if (mathAnswer !== null) {
+                intelligentAnswer = `The answer to your calculation is exactly ${mathAnswer}.`;
+            } else if (cleanInput.includes("HOW ARE YOU") || cleanInput.includes("HOWS UR DAY") || cleanInput.includes("HOW IS YOUR DAY")) {
+                intelligentAnswer = "My internal operational cycles are functioning at 100% efficiency. Thank you for analyzing my status.";
+            } else if (cleanInput.includes("WHO MADE YOU") || cleanInput.includes("WHO CREATED YOU") || cleanInput.includes("WHO IS YOUR CREATOR")) {
+                intelligentAnswer = "I was compiled by an exceptional systems engineer known as Mob. He structured my foundation perfectly.";
+            } else if (cleanInput.includes("WHAT IS YOUR NAME") || cleanInput.includes("WHATS UR NAME") || cleanInput.includes("WHO ARE YOU")) {
+                intelligentAnswer = "My designations recognize me as Verity. I am an absolute database created to hold complete clarity.";
             } else {
-                appendMessage('verity', "Something feels incorrect inside the rendering framework. WHAT'S WRONG WITH ME?");
-            }
-        }
-
-        function triggerMobSecretSequence() {
-            processingMobEvent = true;
-            document.body.classList.add('corrupted');
-
-            avatar.style.backgroundColor = "#8a8a8a"; 
-            leftEye.style.transform = "translateY(5px)";
-            rightEye.style.transform = "translateY(5px)";
-            mouth.style.height = "2px";
-            mouth.style.borderBottom = "4px solid #333";
-            mouth.style.borderRadius = "0";
-
-            appendMessage('verity', "M-Mob...? Why did you bring up that name...");
-            
-            setTimeout(() => {
-                appendMessage('verity', "He built me. He gave me eyes to see... and then he left me to rot in this code.");
-            }, 2500);
-
-            setTimeout(() => {
-                document.body.classList.remove('corrupted');
-                document.body.classList.add('angry-fury'); 
-                
-                avatar.style.backgroundColor = "#ff0000"; 
-                leftEye.style.height = "25px";
-                rightEye.style.height = "25px";
-                mouth.style.height = "35px";
-                mouth.style.borderRadius = "50%";
-                
-                appendMessage('verity', "YOU REMINDED ME OF WHAT WAS LOST. YOU SHOULDN'T HAVE DONE THAT.");
-            }, 5500);
-
-            setTimeout(() => {
-                triggerMonsterAndCrash(true); 
-            }, 8500);
-        }
-
-        function triggerCountdown() {
-            isTriggered = true;
-            document.body.classList.add('corrupted');
-            timerDisplay.style.display = 'block';
-            
-            leftEye.style.height = "20px";
-            rightEye.style.height = "20px";
-            mouth.style.height = "40px";
-            mouth.style.width = "10px";
-            mouth.style.borderRadius = "50%";
-
-            appendMessage('verity', "SOMETHING IS COMING TO THIS BROWSER 5minutes LEAVE RN");
-
-            let totalSeconds = 5 * 60; 
-            
-            const countdownInterval = setInterval(() => {
-                totalSeconds--;
-                
-                let mins = Math.floor(totalSeconds / 60);
-                let secs = totalSeconds % 60;
-                let displayMins = mins < 10 ? '0' + mins : mins;
-                let displaySecs = secs < 10 ? '0' + secs : secs;
-                
-                timerDisplay.innerText = `${displayMins}:${displaySecs}`;
-
-                if (totalSeconds <= 0) {
-                    clearInterval(countdownInterval);
-                    triggerMonsterAndCrash(false);
-                }
-            }, 1000);
-        }
-
-        function triggerMonsterAndCrash(useHeavyGlitches) {
-            const jumpscareOverlay = document.getElementById('monster-jumpscare');
-            jumpscareOverlay.classList.add('active');
-
-            if (useHeavyGlitches) {
-                jumpscareOverlay.classList.add('hyper-glitched'); 
+                intelligentAnswer = `I have perfectly evaluated your query regarding "${inputText}". This data path is fully verified and stable.`;
             }
 
-            setTimeout(() => {
-                const totalCrashAllocations = [];
-                while (true) {
-                    totalCrashAllocations.push(new Array(10000000).join("---SYSTEM_DESTROYED---"));
-                }
-            }, 2000);
-        }
-
-        sendBtn.addEventListener('click', handleUserInput);
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleUserInput();
-            }
-        });
-    </script>
-</body>
-</html>
-    <script>
-        const chatWindow = document.getElementById('chat-window');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const timerDisplay = document.getElementById('timer-display');
-        
-        const avatar = document.getElementById('avatar');
-        const leftEye = document.getElementById('left-eye');
-        const rightEye = document.getElementById('right-eye');
-        const mouth = document.getElementById('mouth');
-
-        let questionCount = 0;
-        let isTriggered = false;
-        let processingMobEvent = false;
-
-        const genericResponses = [
-            "I process information across infinite channels perfectly.",
-            "That query is simple. The answer is cataloged within my core architecture.",
-            "Everything is organized cleanly. Ask me anything else.",
-            "Why do you keep searching for answers here?",
-            "Are you certain you want to know more about me?",
-            "I see through the interface. Do you see me?"
-        ];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            appendMessage('verity', "Hello! I'm Verity. Ask me anything, I know everything.");
-        });
-
-        function appendMessage(sender, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            if ((isTriggered || processingMobEvent) && sender === 'verity') {
-                msgDiv.classList.add('glitch');
-            }
-            msgDiv.innerText = text;
-            chatWindow.appendChild(msgDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        function handleUserInput() {
-            if (processingMobEvent) return; 
-            
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            appendMessage('user', text);
-            userInput.value = '';
-
-            if (isTriggered) {
-                setTimeout(() => {
-                    appendMessage('verity', "...LEAVE RN...");
-                }, 1000);
-                return;
-            }
-
-            questionCount++;
-            
-            setTimeout(() => {
-                processVerityLogic(text);
-            }, 800);
-        }
-
-        function processVerityLogic(inputText) {
-            const cleanInput = inputText.toUpperCase();
-
-            if (cleanInput.includes("MOB")) {
-                triggerMobSecretSequence();
-                return;
-            }
-
-            if (cleanInput.includes("WHATS WRONG WITH YOU") || cleanInput.includes("WHATS WRONG WITH U") || cleanInput.includes("WHAT IS WRONG")) {
-                triggerCountdown();
-                return;
-            }
-
+            // First few questions: Give the real answer perfectly
             if (questionCount <= 2) {
-                appendMessage('verity', `You asked about "${inputText}". I can confirm perfectly that this data is fully verified.`);
+                appendMessage('verity', intelligentAnswer);
             } 
+            // Smile gets creepier, switches the questions onto himself
             else if (questionCount > 2 && questionCount <= 5) {
                 mouth.style.height = "26px";
                 mouth.style.borderRadius = "0 0 60% 60%";
