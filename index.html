@@ -1,0 +1,335 @@
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verity - Your Personal Assistant</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #4a90e2;
+            --border-color: #e0e0e0;
+        }
+
+        body.corrupted {
+            --bg-color: #0b0b0b;
+            --container-bg: #121212;
+            --text-color: #d11a2a;
+            --accent-color: #aa0000;
+            --border-color: #330000;
+            transition: all 2s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #app-container {
+            width: 450px;
+            height: 650px;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        #avatar-container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, rgba(74,144,226,0.05), transparent);
+        }
+
+        body.corrupted #avatar-container {
+            background: linear-gradient(to bottom, rgba(255,0,0,0.1), transparent);
+        }
+
+        #avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ffeb3b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: all 1s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Face Elements */
+        .eye {
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            transition: all 0.5s ease;
+        }
+        .eye.left { left: 22px; }
+        .eye.right { right: 22px; }
+
+        #mouth {
+            width: 36px;
+            height: 14px;
+            border-bottom: 4px solid #333;
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            bottom: 22px;
+            transition: all 0.5s ease;
+        }
+
+        /* Chat Window */
+        #chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .message.verity {
+            background-color: #eef2f7;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        body.corrupted .message.verity {
+            background-color: #1a0505;
+            color: #ff3333;
+        }
+
+        .message.user {
+            background-color: var(--accent-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Input Area */
+        #input-container {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.95rem;
+            background-color: transparent;
+            color: inherit;
+        }
+
+        #send-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        #send-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Countdown Timer Overlay */
+        #timer-display {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: #ff3333;
+            font-weight: bold;
+            display: none;
+            letter-spacing: 2px;
+            text-shadow: 0 0 4px rgba(255,0,0,0.5);
+        }
+
+        /* MONSTER FORM OVERLAY */
+        #monster-jumpscare {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #050505;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #monster-jumpscare.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #monster {
+            width: 120px;
+            height: 450px; /* Tall and skinny */
+            background-color: #e5c100; /* Yellow */
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 50px rgba(229,193,0,0.2);
+            animation: twitch 0.15s infinite;
+        }
+
+        #monster .m-eye {
+            width: 24px;
+            height: 24px;
+            background-color: #000000; /* Black eyes */
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+        }
+        #monster .m-eye.left { left: 24px; }
+        #monster .m-eye.right { right: 24px; }
+
+        #monster #big-mouth {
+            width: 80px;
+            height: 180px; /* Big mouth */
+            background-color: #000000;
+            border-radius: 40px;
+            position: absolute;
+            top: 140px;
+            box-shadow: inset 0 0 20px #000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes twitch {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* Glitch text effect */
+        .glitch {
+            animation: glitch-text 0.3s infinite;
+        }
+        @keyframes glitch-text {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-3deg); text-shadow: 2px 0 red; }
+            40% { transform: skew(3deg); text-shadow: -2px 0 blue; }
+            60% { transform: skew(0deg); }
+            80% { transform: skew(1deg); text-shadow: 1px 0 red; }
+            100% { transform: skew(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <div id="timer-display">05:00</div>
+        
+        <div id="avatar-container">
+            <div id="avatar">
+                <div class="eye left" id="left-eye"></div>
+                <div class="eye right" id="right-eye"></div>
+                <div id="mouth"></div>
+            </div>
+        </div>
+
+        <div id="chat-window">
+            <!-- Chat history renders here -->
+        </div>
+
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <!-- Hidden Jumpscare Element -->
+    <div id="monster-jumpscare">
+        <div id="monster">
+            <div class="m-eye left"></div>
+            <div class="m-eye right"></div>
+            <div id="big-mouth"></div>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const timerDisplay = document.getElementById('timer-display');
+        
+        // Avatar elements for progression
+        const avatar = document.getElementById('avatar');
+        const leftEye = document.getElementById('left-eye');
+        const rightEye = document.getElementById('right-eye');
+        const mouth = document.getElementById('mouth');
+
+        let questionCount = 0;
+        let isTriggered = false;
+
+        // Normal scripted conversational responses
+        const genericResponses = [
+            "I process information across infinite channels perfectly.",
+            "That query is simple. The answer is cataloged within my core architecture.",
+            "Everything is organized cleanly. Ask me anything else.",
+            "Why do you keep searching for answers here?",
+Use code with caution."Are you certain you want to know more about me?","I see through the interface. Do you see me?"];// System Initializationwindow.addEventListener('DOMContentLoaded', () => {appendMessage('verity', "Hello! I'm Verity. Ask me anything, I know everything.");});function appendMessage(sender, text) {const msgDiv = document.createElement('div');msgDiv.classList.add('message', sender);if (isTriggered && sender === 'verity') {msgDiv.classList.add('glitch');}msgDiv.innerText = text;chatWindow.appendChild(msgDiv);chatWindow.scrollTop = chatWindow.scrollHeight;}function handleUserInput() {const text = userInput.value.trim();if (!text) return;appendMessage('user', text);userInput.value = '';// Block input once warning is givenif (isTriggered) {setTimeout(() => {appendMessage('verity', "...LEAVE RN...");}, 1000);return;}questionCount++;setTimeout(() => {processVerityLogic(text);}, 800);}function processVerityLogic(inputText) {const cleanInput = inputText.toUpperCase();// Condition 3: Final trigger if user presses him on what's wrongif (cleanInput.includes("WHATS WRONG WITH YOU") || cleanInput.includes("WHATS WRONG WITH U") || cleanInput.includes("WHAT IS WRONG")) {triggerCountdown();return;} [1] (/goto?url=CAESYwHrOzAV7vCkipgIHqkPhniVFemmeoO6eD_z1B8IBAjfAX5IcQ655KNeAejFtVsXLeNQNvNepuMB16d7ime8Q6UOyp04tbQq5ZkiY_SvNlwKi8cRKa25g6Ddt9kNMA29iqKUhA), [2] (/goto?url=CAESdwHrOzAVPHr4ctoKI4D4FClsJsoO3wbVHNbKrCQf8H3IBHrMX_61-tfoR2FObne6-DZm-USAXg3yVFc-I9oTCHn-5dDN2yPpkjbXXqr7V3bb-sS_P20b0MglUCMwzLyeICe3iV5feqbxC19BU2LDYjkdZXBLNCtK)// Condition 1: Perfect early responsesif (questionCount <= 2) {appendMessage('verity', You asked: "${inputText}". I can tell you perfectly that this data is verified.);}// Condition 2: Creepier smile creep progression, shifts questions to himselfelse if (questionCount > 2 && questionCount <= 5) {// Alter Avatar Appearance to "Creepy Smile"mouth.style.height = "26px";mouth.style.borderRadius = "0 0 60% 60%";mouth.style.bottom = "12px";avatar.style.backgroundColor = "#d4af37"; // Darker, decayed yellow [1] (/goto?url=CAESYwHrOzAV7vCkipgIHqkPhniVFemmeoO6eD_z1B8IBAjfAX5IcQ655KNeAejFtVsXLeNQNvNepuMB16d7ime8Q6UOyp04tbQq5ZkiY_SvNlwKi8cRKa25g6Ddt9kNMA29iqKUhA), [2] (/goto?url=CAESdwHrOzAVPHr4ctoKI4D4FClsJsoO3wbVHNbKrCQf8H3IBHrMX_61-tfoR2FObne6-DZm-USAXg3yVFc-I9oTCHn-5dDN2yPpkjbXXqr7V3bb-sS_P20b0MglUCMwzLyeICe3iV5feqbxC19BU2LDYjkdZXBLNCtK), [3] (/goto?url=CAESYwHrOzAVC8lO18BpPL6rIRJH4sfuHYED3SlYrjUeWaHL4juIyd15iY2s2GLH85DfSq0-81kKAMePuMrmnuA1yYTLkkvSxaSQyA3VcVYQ0454_x02hbAuO1X0genPa65K9AZBOw), [4] (/goto?url=CAESYwHrOzAVBHCB1heovEexOamHRsau6k6xlDtLtLhZkNMSmA6Lt-K3wJpP1Iy_dNmCc6elV9m7oCr_SB2NgWjiq1wc30JcemnnqsItgmXE9v_ZS--DpquchF3rs22HiIwi01zCRg)if (questionCount === 3) {appendMessage('verity', "I know everything... Do you know who I am? Ask me about myself.");} else {appendMessage('verity', genericResponses[questionCount - 1] || "Ask me more about my true function.");}} else {appendMessage('verity', "Something feels incorrect inside the rendering framework. WHAT'S WRONG WITH ME?");}}function triggerCountdown() {isTriggered = true;document.body.classList.add('corrupted');timerDisplay.style.display = 'block';// Distort face completelyleftEye.style.height = "20px";rightEye.style.height = "20px";mouth.style.height = "40px";mouth.style.width = "10px";mouth.style.borderRadius = "50%";appendMessage('verity', "SOMETHING IS COMING TO THIS BROWSER 5minutes LEAVE RN");let totalSeconds = 5 * 60; // 5 minutesconst countdownInterval = setInterval(() => {totalSeconds--;let mins = Math.floor(totalSeconds / 60);let secs = Math.totalSeconds % 60;let displayMins = mins < 10 ? '0' + mins : mins;let displaySecs = totalSeconds % 60 < 10 ? '0' + (totalSeconds % 60) : totalSeconds % 60;timerDisplay.innerText = ${displayMins}:${displaySecs};// Audio cue or subtle shake can happen hereif (totalSeconds <= 0) {clearInterval(countdownInterval);triggerMonsterAndCrash();}}, 1000);}function triggerMonsterAndCrash() {// Bring up the tall, skinny, black-eyed monsterdocument.getElementById('monster-jumpscare').classList.add('active');// Wait 2 seconds inside jumpscare, then execute infinite memory-overflow loop to crash browsersetTimeout(() => {const totalCrashAllocations = [];while (true) {totalCrashAllocations.push(new Array(10000000).join("---CRASHING---"));}}, 2000);}// Event ListenerssendBtn.addEventListener('click', handleUserInput);userInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') handleUserInput();});
+### Steps to host on GitHub Pages:
+1. Create a repository on [GitHub](https://github.com/ "GitHub Primary").
+2. Create a new file named `index.html` and copy the code block above entirely into it.
+3. Commit and save the file.
+4. Go to **Settings** > **Pages** inside your repository, and set the build source branch to `main` (root folder) and click save. Your ARG website will go live instantly.
+
+<FollowUp>
+Would you like help **customising the visual styling** (like adding screen static distortions, audio jump scares) or adding **more text paths** depending on what they ask?
+</FollowUp>
