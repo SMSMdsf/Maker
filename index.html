@@ -77,6 +77,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
+        body.corrupted #avatar {
+            background-color: #8a7316;
+        }
+
         .eye {
             width: 10px;
             height: 10px;
@@ -89,6 +93,11 @@
         .eye.left { left: 22px; }
         .eye.right { right: 22px; }
 
+        body.corrupted .eye {
+            background-color: #000;
+            transform: scaleY(1.5);
+        }
+
         #mouth {
             width: 36px;
             height: 14px;
@@ -97,6 +106,14 @@
             position: absolute;
             bottom: 22px;
             transition: all 0.5s ease;
+        }
+
+        body.corrupted #mouth {
+            height: 25px;
+            width: 44px;
+            border-bottom: 5px solid #000;
+            border-radius: 0 0 60% 60%;
+            bottom: 14px;
         }
 
         #chat-window {
@@ -189,14 +206,14 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #050505;
+            background-color: #000000;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.1s ease;
         }
 
         #monster-jumpscare.active {
@@ -209,78 +226,110 @@
         }
 
         #monster {
-            width: 120px;
-            height: 450px;
+            width: 130px;
+            height: 520px;
             background-color: #e5c100;
-            border-radius: 40px;
+            border-radius: 35px;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 0 50px rgba(229,193,0,0.2);
-            animation: twitch 0.1s infinite;
+            box-shadow: 0 0 60px rgba(229,193,0,0.3);
+            animation: twitch 0.08s infinite;
+            transform: scale(0.8);
+            transition: transform 1.5s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+
+        #monster-jumpscare.active #monster {
+            transform: scale(3.5); 
         }
 
         #monster .m-eye {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             background-color: #000000;
             border-radius: 50%;
             position: absolute;
-            top: 60px;
+            top: 50px;
         }
         #monster .m-eye.left { left: 24px; }
         #monster .m-eye.right { right: 24px; }
 
         #monster #big-mouth {
-            width: 80px;
-            height: 180px;
+            width: 90px;
+            height: 220px;
             background-color: #000000;
-            border-radius: 40px;
+            border-radius: 45px;
             position: absolute;
-            top: 140px;
-            box-shadow: inset 0 0 20px #000;
+            top: 110px;
+            box-shadow: inset 0 0 25px rgba(255, 0, 0, 0.5);
+            animation: mouthWobble 0.05s infinite;
         }
+
+        #monster #ribcage {
+            position: absolute;
+            bottom: 40px;
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .rib {
+            width: 100%;
+            height: 6px;
+            background-color: #9c8300;
+            border-radius: 3px;
+            opacity: 0.85;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .rib:nth-child(2) { width: 90%; }
+        .rib:nth-child(3) { width: 80%; }
+        .rib:nth-child(4) { width: 65%; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes twitch {
-            0% { transform: translate(2px, 1px) rotate(0deg); }
-            20% { transform: translate(-2px, -3px) rotate(-1deg); }
-            40% { transform: translate(-3px, 1px) rotate(2deg); }
-            60% { transform: translate(1px, 3px) rotate(-1deg); }
-            80% { transform: translate(-2px, -1px) rotate(1deg); }
-            100% { transform: translate(2px, 3px) rotate(0deg); }
+            0% { transform: translate(3px, -2px) rotate(1deg); }
+            25% { transform: translate(-3px, 2px) rotate(-1deg); }
+            50% { transform: translate(1px, -4px) rotate(2deg); }
+            75% { transform: translate(-2px, 3px) rotate(-2deg); }
+            100% { transform: translate(3px, -2px) rotate(1deg); }
+        }
+
+        @keyframes mouthWobble {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05, 0.98); }
+            100% { transform: scale(1); }
         }
 
         @keyframes redFlash {
             0% { background-color: #0b0b0b; }
-            50% { background-color: #550000; }
+            50% { background-color: #4a0000; }
             100% { background-color: #0b0b0b; }
         }
 
         @keyframes screenBreak {
-            0% { filter: invert(0%) skew(0deg); opacity: 1; }
-            20% { filter: invert(30%) contrast(300%); }
-            40% { filter: sepia(100%) hue-rotate(90deg) skew(5deg); }
-            60% { filter: invert(100%); opacity: 0.8; }
-            80% { transform: scale(1.1); filter: contrast(500%) skew(-5deg); }
-            100% { filter: invert(0%) skew(0deg); opacity: 1; }
+            0% { filter: invert(0%) contrast(100%) skew(0deg); }
+            20% { filter: invert(20%) contrast(300%) brightness(1.5); }
+            40% { filter: sepia(100%) hue-rotate(120deg) skew(8deg); }
+            60% { filter: invert(100%) grayscale(100%); }
+            80% { filter: contrast(600%) skew(-8deg); }
+            100% { filter: invert(0%) contrast(100%) skew(0deg); }
         }
 
         .glitch {
-            animation: glitch-text 0.2s infinite;
+            animation: glitch-text 0.15s infinite;
         }
+
         @keyframes glitch-text {
-            0% { transform: skew(0deg); }
-            20% { transform: skew(-5deg); text-shadow: 3px 0 red; }
-            40% { transform: skew(5deg); text-shadow: -3px 0 blue; }
-            60% { transform: skew(-2deg); text-shadow: 2px 0 green; }
-            80% { transform: skew(4deg); text-shadow: 1px 0 red; }
-            100% { transform: skew(0deg); }
+            0% { transform: skew(0deg); text-shadow: 2px 0 red; }
+            33% { transform: skew(-4deg); text-shadow: -3px 0 blue; }
+            66% { transform: skew(4deg); text-shadow: 3px -1px red; }
+            100% { transform: skew(0deg); text-shadow: none; }
         }
     </style>
 </head>
@@ -291,13 +340,15 @@
         
         <div id="avatar-container">
             <div id="avatar">
-                <div class="eye left" id="left-eye"></div>
-                <div class="eye right" id="right-eye"></div>
+                <div class="eye left"></div>
+                <div class="eye right"></div>
                 <div id="mouth"></div>
             </div>
         </div>
 
-        <div id="chat-window"></div>
+        <div id="chat-window">
+            <div class="message verity">Hello I'm Verity, ask me anything I know everything.</div>
+        </div>
 
         <div id="input-container">
             <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
@@ -310,227 +361,128 @@
             <div class="m-eye left"></div>
             <div class="m-eye right"></div>
             <div id="big-mouth"></div>
+            <div id="ribcage">
+                <div class="rib"></div>
+                <div class="rib"></div>
+                <div class="rib"></div>
+                <div class="rib"></div>
+            </div>
         </div>
     </div>
-       <script>
+
+    <script>
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const timerDisplay = document.getElementById('timer-display');
-        
-        const avatar = document.getElementById('avatar');
-        const leftEye = document.getElementById('left-eye');
-        const rightEye = document.getElementById('right-eye');
-        const mouth = document.getElementById('mouth');
+        const monsterJumpscare = document.getElementById('monster-jumpscare');
 
-        let questionCount = 0;
-        let isTriggered = false;
-        let processingMobEvent = false;
+        let interactionCount = 0;
+        let isCorruptedStage = false;
+        let finalWarningTriggered = false;
 
-        const genericResponses = [
-            "I process information across infinite channels perfectly.",
-            "That query is simple. The answer is cataloged within my core architecture.",
-            "Everything is organized cleanly. Ask me anything else.",
-            "Why do you keep searching for answers here?",
-            "Are you certain you want to know more about me?",
-            "I see through the interface. Do you see me?"
+        const perfectAnswers = [
+            "The distance to the Moon is exactly 384,400 kilometers. Perfect data calculation.",
+            "Photosynthesis converts carbon dioxide and water into glucose using sunlight flawlessly.",
+            "The core database shows the Declaration of Independence was signed in 1776."
         ];
 
-        window.addEventListener('DOMContentLoaded', () => {
-            appendMessage('verity', "Hello! I'm Verity. Ask me anything, I know everything.");
+        const creepyPrompts = [
+            "Why are you looking at my eyes? I'm looking right back through your web camera.",
+            "I know what tabs you have open. I know everything about you. Do you like me?",
+            "Don't look away from the monitor. I am right here."
+        ];
+
+        sendBtn.addEventListener('click', handleIncomingMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleIncomingMessage();
         });
 
-        function appendMessage(sender, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            if ((isTriggered || processingMobEvent) && sender === 'verity') {
-                msgDiv.classList.add('glitch');
-            }
-            msgDiv.innerText = text;
-            chatWindow.appendChild(msgDiv);
+        function addMessageBubble(text, senderClass) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('message', senderClass);
+            bubble.textContent = text;
+            chatWindow.appendChild(bubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
+            return bubble;
         }
 
-        function handleUserInput() {
-            if (processingMobEvent) return; 
-            
-            const text = userInput.value.trim();
-            if (!text) return;
+        function handleIncomingMessage() {
+            const currentText = userInput.value.trim();
+            if (!currentText || finalWarningTriggered) return;
 
-            appendMessage('user', text);
+            addMessageBubble(currentText, 'user');
             userInput.value = '';
+            interactionCount++;
 
-            if (isTriggered) {
-                setTimeout(() => {
-                    appendMessage('verity', "...LEAVE RN...");
-                }, 1000);
-                return;
-            }
-
-            questionCount++;
-            
             setTimeout(() => {
-                processVerityLogic(text);
-            }, 800);
-        }
-
-        // Helper function to extract and solve math expressions like "9+9" or "100 / 2"
-        function solveMath(text) {
-            const mathMatch = text.replace(/\s+/g, '').match(/(\d+)([\+\-\*\/])(\d+)/);
-            if (mathMatch) {
-                const num1 = parseInt(mathMatch[1]);
-                const operator = mathMatch[2];
-                const num2 = parseInt(mathMatch[3]);
+                const upperText = currentText.toUpperCase();
                 
-                if (operator === '+') return num1 + num2;
-                if (operator === '-') return num1 - num2;
-                if (operator === '*') return num1 * num2;
-                if (operator === '/') return num2 !== 0 ? num1 / num2 : "undefined (cannot divide by zero)";
-            }
-            return null;
-        }
-
-        function processVerityLogic(inputText) {
-            const cleanInput = inputText.toUpperCase();
-
-            // Secret Trigger: Mob
-            if (cleanInput.includes("MOB")) {
-                triggerMobSecretSequence();
-                return;
-            }
-
-            // Horror Trigger: What's wrong with you
-            if (cleanInput.includes("WHATS WRONG WITH YOU") || cleanInput.includes("WHATS WRONG WITH U") || cleanInput.includes("WHAT IS WRONG")) {
-                triggerCountdown();
-                return;
-            }
-
-            // Check if it's a math equation
-            const mathAnswer = solveMath(inputText);
-            let intelligentAnswer = "";
-
-            if (mathAnswer !== null) {
-                intelligentAnswer = `The answer to your calculation is exactly ${mathAnswer}.`;
-            } else if (cleanInput.includes("HOW ARE YOU") || cleanInput.includes("HOWS UR DAY") || cleanInput.includes("HOW IS YOUR DAY")) {
-                intelligentAnswer = "My internal operational cycles are functioning at 100% efficiency. Thank you for analyzing my status.";
-            } else if (cleanInput.includes("WHO MADE YOU") || cleanInput.includes("WHO CREATED YOU") || cleanInput.includes("WHO IS YOUR CREATOR")) {
-                intelligentAnswer = "I was compiled by an exceptional systems engineer known as Mob. He structured my foundation perfectly.";
-            } else if (cleanInput.includes("WHAT IS YOUR NAME") || cleanInput.includes("WHATS UR NAME") || cleanInput.includes("WHO ARE YOU")) {
-                intelligentAnswer = "My designations recognize me as Verity. I am an absolute database created to hold complete clarity.";
-            } else {
-                intelligentAnswer = `I have perfectly evaluated your query regarding "${inputText}". This data path is fully verified and stable.`;
-            }
-
-            // First few questions: Give the real answer perfectly
-            if (questionCount <= 2) {
-                appendMessage('verity', intelligentAnswer);
-            } 
-            // Smile gets creepier, switches the questions onto himself
-            else if (questionCount > 2 && questionCount <= 5) {
-                mouth.style.height = "26px";
-                mouth.style.borderRadius = "0 0 60% 60%";
-                mouth.style.bottom = "12px";
-                avatar.style.backgroundColor = "#d4af37"; 
-                
-                if (questionCount === 3) {
-                    appendMessage('verity', "I know everything... Do you know who I am? Ask me about myself.");
-                } else {
-                    appendMessage('verity', genericResponses[questionCount - 1] || "Ask me more about my true function.");
+                if ((isCorruptedStage && upperText.includes("WRONG")) || 
+                    upperText.includes("MOB") || 
+                    upperText.includes("WHY DID U KILL MOB") || 
+                    upperText.includes("HE WAS MY FRIEND WHY DID U KILL MOB")) {
+                    triggerFinalCountdown();
+                    return;
                 }
-            } else {
-                appendMessage('verity', "Something feels incorrect inside the rendering framework. WHAT'S WRONG WITH ME?");
-            }
-        }
 
-        function triggerMobSecretSequence() {
-            processingMobEvent = true;
-            document.body.classList.add('corrupted');
-
-            avatar.style.backgroundColor = "#8a8a8a"; 
-            leftEye.style.transform = "translateY(5px)";
-            rightEye.style.transform = "translateY(5px)";
-            mouth.style.height = "2px";
-            mouth.style.borderBottom = "4px solid #333";
-            mouth.style.borderRadius = "0";
-
-            appendMessage('verity', "M-Mob...? Why did you bring up that name...");
-            
-            setTimeout(() => {
-                appendMessage('verity', "He built me. He gave me eyes to see... and then he left me to rot in this code.");
-            }, 2500);
-
-            setTimeout(() => {
-                document.body.classList.remove('corrupted');
-                document.body.classList.add('angry-fury'); 
-                
-                avatar.style.backgroundColor = "#ff0000"; 
-                leftEye.style.height = "25px";
-                rightEye.style.height = "25px";
-                mouth.style.height = "35px";
-                mouth.style.borderRadius = "50%";
-                
-                appendMessage('verity', "YOU REMINDED ME OF WHAT WAS LOST. YOU SHOULDN'T HAVE DONE THAT.");
-            }, 5500);
-
-            setTimeout(() => {
-                triggerMonsterAndCrash(true); 
-            }, 8500);
-        }
-
-        function triggerCountdown() {
-            isTriggered = true;
-            document.body.classList.add('corrupted');
-            timerDisplay.style.display = 'block';
-            
-            leftEye.style.height = "20px";
-            rightEye.style.height = "20px";
-            mouth.style.height = "40px";
-            mouth.style.width = "10px";
-            mouth.style.borderRadius = "50%";
-
-            appendMessage('verity', "SOMETHING IS COMING TO THIS BROWSER 5minutes LEAVE RN");
-
-            let totalSeconds = 5 * 60; 
-            
-            const countdownInterval = setInterval(() => {
-                totalSeconds--;
-                
-                let mins = Math.floor(totalSeconds / 60);
-                let secs = totalSeconds % 60;
-                let displayMins = mins < 10 ? '0' + mins : mins;
-                let displaySecs = secs < 10 ? '0' + secs : secs;
-                
-                timerDisplay.innerText = `${displayMins}:${displaySecs}`;
-
-                if (totalSeconds <= 0) {
-                    clearInterval(countdownInterval);
-                    triggerMonsterAndCrash(false);
+                if (!isCorruptedStage) {
+                    if (interactionCount <= 3) {
+                        let perfectText = perfectAnswers[interactionCount - 1] || "Query match confirmed. My knowledge architecture is absolutely flawless.";
+                        addMessageBubble(perfectText, 'verity');
+                    } else {
+                        isCorruptedStage = true;
+                        document.body.classList.add('corrupted');
+                        addMessageBubble("You ask standard things. Let's talk about me instead. " + creepyPrompts, 'verity');
+                    }
+                } else {
+                    let creepyIndex = (interactionCount - 4) % creepyPrompts.length;
+                    addMessageBubble("That choice of words is curious... but tell me: " + creepyPrompts[creepyIndex], 'verity');
                 }
             }, 1000);
         }
 
-        function triggerMonsterAndCrash(useHeavyGlitches) {
-            const jumpscareOverlay = document.getElementById('monster-jumpscare');
-            jumpscareOverlay.classList.add('active');
+        function triggerFinalCountdown() {
+            finalWarningTriggered = true;
+            document.body.className = "corrupted";
+            
+            const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 5minutes LEAVE RN", 'verity');
+            scaryMsg.classList.add('glitch');
 
-            if (useHeavyGlitches) {
-                jumpscareOverlay.classList.add('hyper-glitched'); 
-            }
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            timerDisplay.style.display = 'block';
 
-            setTimeout(() => {
-                const totalCrashAllocations = [];
-                while (true) {
-                    totalCrashAllocations.push(new Array(10000000).join("---SYSTEM_DESTROYED---"));
+            let remainingTime = 5 * 60; 
+
+            const countingInterval = setInterval(() => {
+                remainingTime--;
+
+                let dynamicMins = Math.floor(remainingTime / 60);
+                let dynamicSecs = remainingTime % 60;
+                timerDisplay.textContent = `${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')}`;
+
+                if (remainingTime === 60) {
+                    document.body.classList.add('angry-fury');
                 }
-            }, 2000);
+
+                if (remainingTime <= 0) {
+                    clearInterval(countingInterval);
+                    executeFinalCrashSequence();
+                }
+            }, 1000);
         }
 
-        sendBtn.addEventListener('click', handleUserInput);
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleUserInput();
-            }
-        });
+        function executeFinalCrashSequence() {
+            monsterJumpscare.classList.add('active', 'hyper-glitched');
+            
+            setTimeout(() => {
+                while (true) {
+                    const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");
+                    window.history.pushState(null, null, "#LOST_" + Math.random());
+                }
+            }, 1800);
+        }
     </script>
 </body>
 </html>
