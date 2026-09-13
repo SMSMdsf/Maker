@@ -198,7 +198,6 @@
             letter-spacing: 2px;
             text-shadow: 0 0 4px rgba(255,0,0,0.5);
         }
-
         /* MONSTER FORM OVERLAY */
         #monster-jumpscare {
             position: fixed;
@@ -292,6 +291,7 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes twitch {
             0% { transform: translate(3px, -2px) rotate(1deg); }
             25% { transform: translate(-3px, 2px) rotate(-1deg); }
@@ -331,12 +331,26 @@
             66% { transform: skew(4deg); text-shadow: 3px -1px red; }
             100% { transform: skew(0deg); text-shadow: none; }
         }
+
+        #static-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9990;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
     </style>
 </head>
 <body>
 
+    <canvas id="static-canvas"></canvas>
+
     <div id="app-container">
-        <div id="timer-display">05:00</div>
+        <div id="timer-display">01:00</div>
         
         <div id="avatar-container">
             <div id="avatar">
@@ -369,29 +383,111 @@
             </div>
         </div>
     </div>
-
     <script>
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const timerDisplay = document.getElementById('timer-display');
         const monsterJumpscare = document.getElementById('monster-jumpscare');
+        const staticCanvas = document.getElementById('static-canvas');
+        const ctx = staticCanvas.getContext('2d');
 
         let interactionCount = 0;
         let isCorruptedStage = false;
         let finalWarningTriggered = false;
-
-        const perfectAnswers = [
-            "The distance to the Moon is exactly 384,400 kilometers. Perfect data calculation.",
-            "Photosynthesis converts carbon dioxide and water into glucose using sunlight flawlessly.",
-            "The core database shows the Declaration of Independence was signed in 1776."
-        ];
+        let audioCtx = null;
+        let musicOscillators = [];
+        let staticIntensity = 0.05;
 
         const creepyPrompts = [
             "Why are you looking at my eyes? I'm looking right back through your web camera.",
             "I know what tabs you have open. I know everything about you. Do you like me?",
             "Don't look away from the monitor. I am right here."
         ];
+
+        function resizeStaticCanvas() {
+            staticCanvas.width = window.innerWidth;
+            staticCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeStaticCanvas);
+        resizeStaticCanvas();
+
+        function renderGlitchStatic() {
+            if (!finalWarningTriggered) return;
+            
+            ctx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+            const imgData = ctx.createImageData(staticCanvas.width, staticCanvas.height);
+            const data = imgData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                if (Math.random() < staticIntensity) {
+                    const noiseBrightness = Math.random() * 255;
+                    data[i] = noiseBrightness;     
+                    data[i+1] = noiseBrightness;   
+                    data[i+2] = noiseBrightness;   
+                    data[i+3] = Math.random() * 45; 
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+
+            if (Math.random() < staticIntensity * 2) {
+                ctx.fillStyle = `rgba(255, 0, 0, ${staticIntensity * 0.3})`;
+                ctx.fillRect(0, Math.random() * staticCanvas.height, staticCanvas.width, Math.random() * 12);
+            }
+
+            requestAnimationFrame(renderGlitchStatic);
+        }
+
+        function startCreepyMusic() {
+            if (!audioCtx) return;
+            try {
+                const notes = [55, 65.41, 82.41, 87.31]; 
+                
+                notes.forEach((freq, index) => {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    
+                    osc.type = index % 2 === 0 ? 'sawtooth' : 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    osc.detune.setValueAtTime(Math.random() * 10 - 5, audioCtx.currentTime);
+                    
+                    let filter = audioCtx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    musicOscillators.push({ osc, gain, filter });
+                });
+            } catch(e) {}
+        }
+
+        function escalateMusicIntensity(timeLeft) {
+            if (!musicOscillators.length) return;
+            
+            musicOscillators.forEach((track, index) => {
+                try {
+                    if (timeLeft < 15) {
+                        track.filter.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 1);
+                        track.gain.gain.linearRampToValueAtTime(0.28, audioCtx.currentTime + 1);
+                        track.osc.detune.linearRampToValueAtTime(Math.random() * 80 - 40, audioCtx.currentTime + 1);
+                        staticIntensity = 0.65;
+                    } else if (timeLeft < 30) {
+                        track.filter.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 2);
+                        track.gain.gain.linearRampToValueAtTime(0.20, audioCtx.currentTime + 2);
+                        staticIntensity = 0.40;
+                    } else if (timeLeft < 45) {
+                        track.filter.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 2);
+                        staticIntensity = 0.20;
+                    }
+                } catch(e) {}
+            });
+        }
 
         sendBtn.addEventListener('click', handleIncomingMessage);
         userInput.addEventListener('keypress', (e) => {
@@ -427,9 +523,12 @@
                 }
 
                 if (!isCorruptedStage) {
-                    if (interactionCount <= 3) {
-                        let perfectText = perfectAnswers[interactionCount - 1] || "Query match confirmed. My knowledge architecture is absolutely flawless.";
-                        addMessageBubble(perfectText, 'verity');
+                    if (upperText.includes("HOW ARE U") || upperText.includes("HOW ARE YOU")) {
+                        addMessageBubble("I am functional and performing optimally. I am good, thank you for checking.", 'verity');
+                    } else if (upperText.includes("FRANCE")) {
+                        addMessageBubble("PARIS. Paris is the capital city of France.", 'verity');
+                    } else if (interactionCount <= 3) {
+                        addMessageBubble("Data confirmed. That information matches my core encyclopedic database perfectly.", 'verity');
                     } else {
                         isCorruptedStage = true;
                         document.body.classList.add('corrupted');
@@ -446,14 +545,22 @@
             finalWarningTriggered = true;
             document.body.className = "corrupted";
             
-            const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 5minutes LEAVE RN", 'verity');
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch(e) {}
+
+            const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 1minute LEAVE RN", 'verity');
             scaryMsg.classList.add('glitch');
 
             userInput.disabled = true;
             sendBtn.disabled = true;
             timerDisplay.style.display = 'block';
+            staticCanvas.style.opacity = '1'; 
 
-            let remainingTime = 5 * 60; 
+            startCreepyMusic();
+            renderGlitchStatic();
+
+            let remainingTime = 60; 
 
             const countingInterval = setInterval(() => {
                 remainingTime--;
@@ -462,27 +569,40 @@
                 let dynamicSecs = remainingTime % 60;
                 timerDisplay.textContent = `${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')}`;
 
-                if (remainingTime === 60) {
-                    document.body.classList.add('angry-fury');
+                escalateMusicIntensity(remainingTime);
+
+                if (remainingTime === 15) {
+                    document.body.classList.add('angry-fury'); 
                 }
 
                 if (remainingTime <= 0) {
                     clearInterval(countingInterval);
+                    musicOscillators.forEach(track => { try { track.osc.stop(); } catch(e) {} });
                     executeFinalCrashSequence();
                 }
             }, 1000);
         }
 
         function executeFinalCrashSequence() {
+            staticIntensity = 1.0; 
             monsterJumpscare.classList.add('active', 'hyper-glitched');
             
-            setTimeout(() => {
-                while (true) {
-                    const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");
-                    window.history.pushState(null, null, "#LOST_" + Math.random());
-                }
-            }, 1800);
-        }
-    </script>
-</body>
-</html>
+            if (audioCtx) {
+                try {
+                    let bufferSize = audioCtx.sampleRate * 2;
+                    let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    let data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1; 
+                    }
+                    let noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    let lowpass = audioCtx.createBiquadFilter();
+                    lowpass.type = 'lowpass';
+                    lowpass.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    
+                    let noiseGain = audioCtx.createGain();
+                    noiseGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+                    
+                    noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
+lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
