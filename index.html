@@ -115,7 +115,6 @@
             border-radius: 0 0 60% 60%;
             bottom: 14px;
         }
-
         #chat-window {
             flex: 1;
             padding: 20px;
@@ -287,11 +286,11 @@
         .rib:nth-child(2) { width: 90%; }
         .rib:nth-child(3) { width: 80%; }
         .rib:nth-child(4) { width: 65%; }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes twitch {
             0% { transform: translate(3px, -2px) rotate(1deg); }
             25% { transform: translate(-3px, 2px) rotate(-1deg); }
@@ -406,7 +405,6 @@
             "I know what tabs you have open. I know everything about you. Do you like me?",
             "Don't look away from the monitor. I am right here."
         ];
-
         function resizeStaticCanvas() {
             staticCanvas.width = window.innerWidth;
             staticCanvas.height = window.innerHeight;
@@ -443,11 +441,11 @@
         function startCreepyMusic() {
             if (!audioCtx) return;
             try {
-                const pitch1 = 50 + 5;
-                const pitch2 = 60 + 5.41;
-                const pitch3 = 80 + 2.41;
-                const pitch4 = 80 + 7.31;
-                const horrorPitches = [pitch1, pitch2, pitch3, pitch4]; 
+                const baseHz1 = 55;
+                const baseHz2 = 65.41;
+                const baseHz3 = 82.41;
+                const baseHz4 = 87.31;
+                const horrorPitches = [baseHz1, baseHz2, baseHz3, baseHz4]; 
                 
                 horrorPitches.forEach((freq, index) => {
                     let osc = audioCtx.createOscillator();
@@ -508,7 +506,6 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
             return bubble;
         }
-
         function handleIncomingMessage() {
             const currentText = userInput.value.trim();
             if (!currentText || finalWarningTriggered) return;
@@ -535,5 +532,95 @@
                         addMessageBubble("PARIS. Paris is the capital city of France.", 'verity');
                     } else if (interactionCount <= 3) {
                         addMessageBubble("Data confirmed. That information matches my core encyclopedic database perfectly.", 'verity');
-} else {isCorruptedStage = true;document.body.classList.add('corrupted');addMessageBubble("You ask standard things. Let's talk about me instead. " + creepyPrompts, 'verity');}} else {let creepyIndex = (interactionCount - 4) % creepyPrompts.length;addMessageBubble("That choice of words is curious... but tell me: " + creepyPrompts[creepyIndex], 'verity');}}, 1000);}function triggerFinalCountdown() {finalWarningTriggered = true;document.body.className = "corrupted";try {audioCtx = new (window.AudioContext || window.webkitAudioContext)();} catch(e) {}const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 1minute LEAVE RN", 'verity');scaryMsg.classList.add('glitch');userInput.disabled = true;sendBtn.disabled = true;timerDisplay.style.display = 'block';staticCanvas.style.opacity = '1';startCreepyMusic();renderGlitchStatic();let remainingTime = 60;const countingInterval = setInterval(() => {remainingTime--;let dynamicMins = Math.floor(remainingTime / 60);let dynamicSecs = remainingTime % 60;timerDisplay.textContent = ${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')};escalateMusicIntensity(remainingTime);if (remainingTime === 15) {document.body.classList.add('angry-fury');}if (remainingTime <= 0) {clearInterval(countingInterval);musicOscillators.forEach(track => { try { track.osc.stop(); } catch(e) {} });executeFinalCrashSequence();}}, 1000);}function executeFinalCrashSequence() {staticIntensity = 1.0;monsterJumpscare.classList.add('active', 'hyper-glitched');if (audioCtx) {try {let bufferSize = audioCtx.sampleRate * 2;let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);let data = buffer.getChannelData(0);for (let i = 0; i < bufferSize; i++) {data[i] = Math.random() * 2 - 1;}let noise = audioCtx.createBufferSource();noise.buffer = buffer;let lowpass = audioCtx.createBiquadFilter();lowpass.type = 'lowpass';lowpass.frequency.setValueAtTime(400, audioCtx.currentTime);let noiseGain = audioCtx.createGain();noiseGain.gain.setValueAtTime(1.0, audioCtx.currentTime);noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(audioCtx.destination);noise.start();} catch(e) {}}setTimeout(() => {while (true) {const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");window.history.pushState(null, null, "#LOST_" + Math.random());}}, 1800);}
-        <html>
+                    } else {
+                        isCorruptedStage = true;
+                        document.body.classList.add('corrupted');
+                        addMessageBubble("You ask standard things. Let's talk about me instead. " + creepyPrompts, 'verity');
+                    }
+                } else {
+                    let creepyIndex = (interactionCount - 4) % creepyPrompts.length;
+                    addMessageBubble("That choice of words is curious... but tell me: " + creepyPrompts[creepyIndex], 'verity');
+                }
+            }, 1000);
+        }
+
+        function triggerFinalCountdown() {
+            finalWarningTriggered = true;
+            document.body.className = "corrupted";
+            
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch(e) {}
+
+            const scaryMsg = addMessageBubble("SOMETHING IS COMING TO THIS BROWSER 1minute LEAVE RN", 'verity');
+            scaryMsg.classList.add('glitch');
+
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            timerDisplay.style.display = 'block';
+            staticCanvas.style.opacity = '1'; 
+
+            startCreepyMusic();
+            renderGlitchStatic();
+
+            let remainingTime = 60; 
+
+            const countingInterval = setInterval(() => {
+                remainingTime--;
+
+                let dynamicMins = Math.floor(remainingTime / 60);
+                let dynamicSecs = remainingTime % 60;
+                timerDisplay.textContent = `${dynamicMins.toString().padStart(2, '0')}:${dynamicSecs.toString().padStart(2, '0')}`;
+
+                escalateMusicIntensity(remainingTime);
+
+                if (remainingTime === 15) {
+                    document.body.classList.add('angry-fury'); 
+                }
+
+                if (remainingTime <= 0) {
+                    clearInterval(countingInterval);
+                    musicOscillators.forEach(track => { try { track.osc.stop(); } catch(e) {} });
+                    executeFinalCrashSequence();
+                }
+            }, 1000);
+        }
+
+        function executeFinalCrashSequence() {
+            staticIntensity = 1.0; 
+            monsterJumpscare.classList.add('active', 'hyper-glitched');
+            
+            if (audioCtx) {
+                try {
+                    let bufferSize = audioCtx.sampleRate * 2;
+                    let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    let data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1; 
+                    }
+                    let noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    let lowpass = audioCtx.createBiquadFilter();
+                    lowpass.type = 'lowpass';
+                    lowpass.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    
+                    let noiseGain = audioCtx.createGain();
+                    noiseGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+                    
+                    noise.connect(lowpass);
+                    lowpass.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    noise.start();
+                } catch(e) {}
+            }
+
+            setTimeout(() => {
+                while (true) {
+                    const crashArrayBuffer = new Array(2500000).fill("SYSTEM_FREEZE_MOB_REVENGE");
+                    window.history.pushState(null, null, "#LOST_" + Math.random());
+                }
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
